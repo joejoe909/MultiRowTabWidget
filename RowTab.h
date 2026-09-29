@@ -14,15 +14,10 @@ public:
 
     bool isActive() const { return m_isActive; }
     void setActive(bool active);
+    void applyActiveGeometry(bool active);
 
-    // Adds a real (visible) tab. The first call automatically installs
-    // the hidden placeholder at index 0.
     int addRealTab(QWidget *widget, const QString &title);
-
-    // Number of real (visible) tabs in this row (excludes placeholder)
     int realTabCount() const;
-
-    // Activates the hidden placeholder tab (index 0).
     void activatePlaceholder();
 
 signals:
@@ -37,6 +32,7 @@ public slots:
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event) override;
+    void showEvent(QShowEvent *event) override;
 
 private slots:
     void onCurrentChanged(int index);
@@ -46,10 +42,12 @@ private slots:
 
 private:
     void ensurePlaceholder();
+    int  tabBarMinHeight() const;   // safe fallback for early calls
 
     uint m_rowNumber;
     bool m_isActive;
     bool m_placeholderInstalled = false;
+    bool m_initialGeometryApplied = false;
 };
 
 #endif // ROWTAB_H

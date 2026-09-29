@@ -3,23 +3,27 @@
 
 #include <QTabBar>
 #include <QMouseEvent>
+#include <QShowEvent>
 
 RowTab::RowTab(uint rowNumber, QWidget *parent)
     : QTabWidget(parent)
     , m_rowNumber(rowNumber)
     , m_isActive(false)
 {
-    // Replace the default tab bar with one that hides tab 0.
     setTabBar(new HiddenFirstTabBar(this));
 
     tabBar()->setExpanding(false);
     tabBar()->setDrawBase(true);
     tabBar()->installEventFilter(this);
 
-    connect(this, &QTabWidget::currentChanged,        this, &RowTab::onCurrentChanged);
-    connect(this, &QTabWidget::tabBarClicked,         this, &RowTab::onTabBarClicked);
-    connect(this, &QTabWidget::tabBarDoubleClicked,   this, &RowTab::onTabBarDoubleClicked);
-    connect(this, &QTabWidget::tabCloseRequested,     this, &RowTab::onTabCloseRequested);
+    // Install the hidden placeholder tab up front so the tab bar has a real,
+    // non-empty size hint even before any user tabs are added.
+    ensurePlaceholder();
+
+    connect(this, &QTabWidget::currentChanged,      this, &RowTab::onCurrentChanged);
+    connect(this, &QTabWidget::tabBarClicked,       this, &RowTab::onTabBarClicked);
+    connect(this, &QTabWidget::tabBarDoubleClicked, this, &RowTab::onTabBarDoubleClicked);
+    connect(this, &QTabWidget::tabCloseRequested,   this, &RowTab::onTabCloseRequested);
 }
 
 void RowTab::ensurePlaceholder()
@@ -27,20 +31,16 @@ void RowTab::ensurePlaceholder()
     if (m_placeholderInstalled)
         return;
 
-    // Insert an empty widget as tab 0. Because HiddenFirstTabBar reports
-    // zero size for index 0, this tab is invisible and unclickable.
     QWidget *placeholder = new QWidget(this);
     QTabWidget::addTab(placeholder, QString());
     m_placeholderInstalled = true;
-
-    // Make the placeholder current so nothing else shows by default.
     QTabWidget::setCurrentIndex(0);
 }
 
 int RowTab::addRealTab(QWidget *widget, const QString &title)
 {
-    ensurePlaceholder();
-    return QTabWidget::addTab(widget, title);   // will be index >= 1
+    ensurePlaceholder();   // no-op after ctor, kept for safety
+    return QTabWidget::addTab(widget, title);
 }
 
 int RowTab::realTabCount() const
@@ -54,25 +54,48 @@ void RowTab::activatePlaceholder()
         QTabWidget::setCurrentIndex(0);
 }
 
+// Returns a reliable tab-bar height even when called very early, before the
+// tab bar has been laid out. The fallback matches the default Qt style height.
+int RowTab::tabBarMinHeight() const
+{
+    const int h = tabBar()->sizeHint().height();
+    return (h > 0) ? h : 26;   // 26px is a safe default for most styles
+}
+
+void RowTab::applyActiveGeometry(bool active)
+{
+    if (active) {
+        setMinimumHeight(0);
+        setMaximumHeight(QWIDGETSIZE_MAX);
+        setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    } else {
+        const int h = tabBarMinHeight();
+        setMinimumHeight(h);
+        setMaximumHeight(h);
+        setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    }
+    updateGeometry();
+}
+
 void RowTab::setActive(bool active)
 {
     if (m_isActive == active)
         return;
 
     m_isActive = active;
+    applyActiveGeometry(active);
+}
 
-    if (active) {
-        setMaximumHeight(QWIDGETSIZE_MAX);
-        setMinimumHeight(0);
-        setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    } else {
-        const int tabHeight = tabBar()->sizeHint().height();
-        setMaximumHeight(tabHeight);
-        setMinimumHeight(tabHeight);
-        setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+// Once the widget is actually shown, the tab bar has a real size hint.
+// Re-apply the current state so inactive rows get the exact correct height.
+void RowTab::showEvent(QShowEvent *event)
+{
+    QTabWidget::showEvent(event);
+
+    if (!m_initialGeometryApplied) {
+        m_initialGeometryApplied = true;
+        applyActiveGeometry(m_isActive);
     }
-
-    updateGeometry();
 }
 
 void RowTab::setCurrentIndex(int index)
@@ -91,10 +114,8 @@ bool RowTab::eventFilter(QObject *obj, QEvent *event)
         QMouseEvent *me = static_cast<QMouseEvent *>(event);
         if (me->button() == Qt::LeftButton) {
             const int index = tabBar()->tabAt(me->pos());
-            // Ignore clicks on the hidden placeholder (index 0).
-            if (index > 0) {
+            if (index > 0)
                 emit tabBarClicked(index);
-            }
         }
     }
     return QTabWidget::eventFilter(obj, event);
