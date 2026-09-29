@@ -1,0 +1,59 @@
+# ====================================================================
+# Qt and QtCreator .gitignore template
+# ====================================================================
+
+# C++ object files and build libraries
+*.slo
+*.lo
+*.o
+*.a
+*.la
+*.lai
+*.so
+*.so.*
+*.dll
+*.dylib
+
+# Qt-generated build artifacts
+object_script.*.Release
+object_script.*.Debug
+*_plugin_import.cpp
+/.qmake.cache
+/.qmake.stash
+
+# Qt Creator project and machine-specific user configurations
+*.pro.user
+*.pro.user.*
+*.qbs.user
+*.qbs.user.*
+*.qmlproject.user
+*.qmlproject.user.*
+CMakeLists.txt.user*
+*creator.user*
+
+# Intermediate files from Meta-Object Compiler (MOC), User Interface Compiler (UIC), & Resource Compiler (RCC)
+*.moc
+moc_*.cpp
+moc_*.h
+qrc_*.cpp
+ui_*.h
+*_qmlcache.qrc
+*.qmlc
+*.jsc
+
+# Build directories and generated Makefiles
+Makefile*
+*build-*
+build/
+
+# Qt localized translation binaries and unit tests
+*.qm
+*.prl
+*.qmlls.ini
+target_wrapper.*
+
+# Editor recovery files
+*.autosave
+
+# Compilation database (if utilizing Clang tools or QtCreator 4.8+)
+compile_commands.json
