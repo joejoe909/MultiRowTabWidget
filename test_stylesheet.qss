@@ -1,0 +1,141 @@
+/* =========================================================
+   Multi-Row Tab Widget — Dark Theme
+   ========================================================= */
+
+/* ---------- Global ---------- */
+QWidget {
+    background-color: #2b2b2b;
+    color: #e6e6e6;
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    font-size: 10pt;
+}
+
+QMainWindow, QDialog {
+    background-color: #232323;
+}
+
+/* ---------- RowTab (QTabWidget) ---------- */
+RowTab {
+    background-color: #2b2b2b;
+}
+
+RowTab::pane {
+    background-color: #313131;
+    border: 1px solid #1e1e1e;
+    border-top: none;
+    top: -1px;              /* tuck the pane under the tab bar */
+}
+
+RowTab QTabBar {
+    background-color: #232323;
+}
+
+/* ---------- Tab bar tabs ---------- */
+RowTab QTabBar::tab {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                stop:0 #3a3a3a, stop:0.5 #333333, stop:1 #2c2c2c);
+    color: #cfcfcf;
+    border: 1px solid #1e1e1e;
+    border-bottom: none;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    min-width: 100px;
+    padding: 4px 10px;
+    margin-right: 2px;
+}
+
+RowTab QTabBar::tab:hover:!selected {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                stop:0 #454545, stop:1 #353535);
+    color: #ffffff;
+}
+
+RowTab QTabBar::tab:selected {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                stop:0 #4a6b8a, stop:1 #3d5a75);
+    color: #ffffff;
+    border: 1px solid #1e1e1e;
+    border-bottom: none;
+}
+
+RowTab QTabBar::tab:!selected {
+    margin-top: 3px;        /* subtle "raised" look for active tab */
+}
+
+/* ---------- Hidden placeholder tab (index 0) ---------- */
+/* Must come AFTER the generic ::tab rule so it wins.      */
+RowTab QTabBar::tab:first {
+    min-width: 0px;
+    max-width: 0px;
+    padding: 0px;
+    margin: 0px;
+    border: 0px;
+    background: transparent;
+}
+
+/* ---------- Tab close button (if enabled) ---------- */
+RowTab QTabBar::close-button {
+    image: url(:/icons/close_dark.png);   /* optional */
+    subcontrol-position: right;
+}
+
+/* ---------- Content area ---------- */
+QLabel {
+    background-color: #313131;
+    color: #dcdcdc;
+    padding: 8px;
+}
+
+/* ---------- Scrollbars ---------- */
+QScrollBar:vertical {
+    background: #232323;
+    width: 12px;
+    margin: 0;
+}
+QScrollBar::handle:vertical {
+    background: #4a4a4a;
+    min-height: 24px;
+    border-radius: 6px;
+}
+QScrollBar::handle:vertical:hover {
+    background: #5a5a5a;
+}
+QScrollBar::add-line:vertical,
+QScrollBar::sub-line:vertical {
+    height: 0;
+    background: none;
+}
+QScrollBar:horizontal {
+    background: #232323;
+    height: 12px;
+    margin: 0;
+}
+QScrollBar::handle:horizontal {
+    background: #4a4a4a;
+    min-width: 24px;
+    border-radius: 6px;
+}
+QScrollBar::handle:horizontal:hover {
+    background: #5a5a5a;
+}
+QScrollBar::add-line:horizontal,
+QScrollBar::sub-line:horizontal {
+    width: 0;
+    background: none;
+}
+
+/* ---------- Menus / tooltips (nice-to-have) ---------- */
+QMenu {
+    background-color: #2b2b2b;
+    border: 1px solid #1e1e1e;
+    color: #e6e6e6;
+}
+QMenu::item:selected {
+    background-color: #4a6b8a;
+}
+QToolTip {
+    background-color: #1e1e1e;
+    color: #e6e6e6;
+    border: 1px solid #4a6b8a;
+    padding: 3px;
+}

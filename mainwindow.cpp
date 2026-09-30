@@ -1,12 +1,20 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QLabel>
+#include <QFile>
+#include <QTextStream>
+#include <QDebug>
+#include <QCoreApplication>
+#include <QDir>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    loadStyleSheet(":/styles/test_stylesheet.qss");
+
     multiTab = new MultiRowTabWidget(3, this);
 
     setCentralWidget(multiTab);
@@ -25,4 +33,16 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::loadStyleSheet(const QString &path)
+{
+    QFile f(path);
+    if (!f.open(QFile::ReadOnly | QFile::Text)) {
+        qWarning() << "Failed to load stylesheet:" << path
+                   << "reason:" << f.errorString();
+        return;
+    }
+    QTextStream ts(&f);
+    qApp->setStyleSheet(ts.readAll());
 }

@@ -1,6 +1,13 @@
 cmake_minimum_required(VERSION 3.19)
 project(MultiRowTabWidget_Demo LANGUAGES CXX)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+set(CMAKE_AUTOMOC ON)   
+set(CMAKE_AUTORCC ON)   
+set(CMAKE_AUTOUIC ON)   
+
 find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets)
 find_package(Qt6 REQUIRED COMPONENTS Core)
 find_package(Qt6 REQUIRED COMPONENTS Widgets)
@@ -16,6 +23,7 @@ qt_add_executable(MultiRowTabWidget_Demo
     RowTab.h RowTab.cpp
     MultiRowTabWidget.h MultiRowTabWidget.cpp
     HiddenFirstTabBar.h
+    resources.qrc
 )
 
 target_link_libraries(MultiRowTabWidget_Demo

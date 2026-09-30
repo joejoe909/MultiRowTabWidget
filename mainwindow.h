@@ -22,5 +22,7 @@ private:
     Ui::MainWindow *ui;
     MultiRowTabWidget *multiTab;
 
+    void loadStyleSheet(const QString &path);
+
 };
 #endif // MAINWINDOW_H
