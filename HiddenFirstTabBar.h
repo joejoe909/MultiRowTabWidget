@@ -30,7 +30,7 @@ protected:
         return QTabBar::minimumTabSizeHint(index);
     }
 
-        // The stylesheet sets min-width and padding on QTabBar::tab, which the
+    // The stylesheet sets min-width and padding on QTabBar::tab, which the
     // style applies to every tab. To hide index 0 completely we skip painting
     // it altogether instead of letting the style draw a 100px sliver.
     void paintEvent(QPaintEvent *event) override
